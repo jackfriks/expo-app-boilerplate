@@ -1,8 +1,7 @@
-import React from "react"
 import { View, StyleSheet, Image, Text, Dimensions } from "react-native"
-import SignInWithOAuth from "./oauth"
+import OauthButtons from "./oauth"
 
-export default function Page() {
+export default function singIn() {
   return (
     <View style={styles.container}>
       <Image
@@ -12,7 +11,7 @@ export default function Page() {
       <Text style={styles.title}>Log in</Text>
       
       <View style={styles.authContainer}>
-        <SignInWithOAuth />
+        <OauthButtons />
       </View>
     </View>
   )
