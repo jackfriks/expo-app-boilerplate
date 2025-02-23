@@ -12,6 +12,9 @@ import { superwallService } from '@/services/superwall';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
+import { tokenCache } from './cache';
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -35,18 +38,29 @@ export default function RootLayout() {
 
   if (!loaded) return null;
 
+  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
+
+  if (!publishableKey) {
+    throw new Error('Add EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY to your .env file')
+  }
+
   return (
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey} >
+      <ClerkLoaded>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <OnboardingProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="onboarding" />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
       </OnboardingProvider>
     </GestureHandlerRootView>
+    </ClerkLoaded>
+    </ClerkProvider>
   );
 }
